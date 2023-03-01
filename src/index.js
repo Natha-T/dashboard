@@ -3,14 +3,24 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 
-import { MoralisProvider } from "react-moralis";
+import { createClient, configureChains, defaultChains, WagmiConfig } from 'wagmi';
+
+import { getDefaultProvider } from 'ethers'
+
+const client = createClient({
+  autoConnect: true,
+  provider: getDefaultProvider(),
+})
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-      <MoralisProvider  serverUrl="https://5qev7n6thbwt.usemoralis.com:2053/server" appId="lScnQgq7AnVwX1MtSvq7VfLJoLvQL5KQEihDmRsh">
+  
+  <WagmiConfig client={client}>
     <App />
-    </MoralisProvider>
+</WagmiConfig>
+
   </React.StrictMode>
 );
 

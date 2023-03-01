@@ -1,76 +1,94 @@
 import React , { useEffect, useState }from 'react' 
 
+import nonft from '../img/nullimg.png'
+
+import { useAccount, } from 'wagmi'
+
 
 function Nftss() {
+  const address = '0x7a3010b00D9866C80cadaFECA573490e432BA3AC'
+
+  const { isConnected } = useAccount()
+
+  const demoAddress = address
+
+ const [tam, setTam] =  useState ([]);
+
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      Authorization: '62d93621-9f2a-4a04-b160-75b582a975e4'
+    }
+  };
 
 
-  const [tam, setTam] =  useState ([]);
+ async function getNft ()  {
+ const url = new URL(`https://api.nftport.xyz/v0/accounts/${demoAddress}?chain=ethereum&page_size=50&include=metadata`);
+    const response = await fetch(url, options);
+    const result = await response.json();
+    setTam(result.nfts);
+    return result;  
+ }
 
-
-const options = {method: 'GET', headers: {Accept: 'application/json', 'X-API-Key': 'test'}};
-
-  async function getGithubData()
-  {
-    let data = await fetch('https://deep-index.moralis.io/api/v2/0xc5EbBC325f9c5520f703c5D6Ca36361d4bEa5ab8/nft?chain=eth&format=decimal', options);
-    let main = await data.json();
-    
-    setTam(main.result);
-  }
 
   useEffect(() => {
-    getGithubData();
-  }, []);
-
-
-
-    return (
-        <div class="col-span-2 text-blue-800 bg-[#12263f] rounded-md " >
+      const checkUser = () => (isConnected ? getNft()  : null);
+      isConnected && checkUser();
+    }, [isConnected]); 
  
-        <div class="flex items-center justify-between p-4 border-b dark:border-primary">
-          <h4 class="text-lg font-semibold text-blue-800">Nfts</h4>
+
+console.log(tam);
+    return (  
+      <div class=" ">
+        <div class=" p-4 w-full border-b dark:border-primary">
+          <h4 class="text-4xl font-semibold text-blue-800">Nfts</h4>
           
         </div>
  
-        <div class="relative space-y-8 lg:space-x-4 p-4 h-78 ">
+        <img className='' src=''/>
       
 
-  {tam.map( item =>{
-    return (
-      
+      <div className="grid lg:grid-cols-3 space-y-10  w-screen rounded-2xl p-8 shadow-2xl">
+       
+        {tam.map(item => {
+          
+return(
+  
+<div class="border-2 box-content p-5 mx-5 rounded-xl max-w-xs shadow-2xl">
+        <a href="#" class="group block relative rounded-md overflow-hidden">
+          
+       
+            
+          {item.cached_file_url !=null && <img src={item.cached_file_url } alt="equilibrium" /> }
+          {item.cached_file_url ==null &&<div> <img src={nonft } alt="equilibrium" /> <p className='text-center'> no data</p> </div> }
+        </a>
 
-<div class="
-   
-  inline-grid  pb-4 bg-gradient-to-tr from-blue-300 to-gray-600 text-white overflow-hidden rounded-2xl shadow
-    hover:shadow-md
-    transition
-  ">
-    <figure class="max-h-64 aspect-square overflow-hidden">
-      <img 
-           class="w-full h-full object-cover transition group-hover:scale-125"
-           src=""
-       />
-    </figure>
-    <div class="p-4">
-      <h3 class="text-xl font-bold"> {item.name}  </h3>
-      <p class="font-serif"></p>
-    </div>
-    <footer class="flex gap-2 px-4">
-      <button class="text-blue-400 hover:text-red-400">
-        <i class="fa-solid fa-heart"></i>
-      </button>
-      <button class="text-blue-400 hover:text-red-400">
-        <i class="fa-solid fa-comment"></i>
-      </button>
-    </footer>
-  </div>
+        <h1>
+          <a href="#" class="block text-white my-4 font-semibold text-lg hover:text-cyan"
+            >{item.name}</a>
+        </h1>
 
-
-
-
-    )
-  })}         
+        <p class="text-soft-blue truncate font-light">
+        {item.description}
+        </p>
 
        
+
+        <hr class="border-dark-blue-line mt-6" />
+
+        <div class="flex items-center space-x-2 mt-4">
+          <img src="/images/image-avatar.png" alt="avatar" class="w-8 h-8" />
+          <p class="text-white">
+        
+            <p href="#" class="text-center break-all hover:text-cyan"> Creation of : {item.creator_address}</p>
+          </p>
+        </div>
+      </div>
+) 
+})}
+  
+
 
 
 
@@ -82,5 +100,3 @@ const options = {method: 'GET', headers: {Accept: 'application/json', 'X-API-Key
 }
 
 export default Nftss;
-
-

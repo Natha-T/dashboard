@@ -1,18 +1,122 @@
-import React from 'react'
+
+import { useAccount } from 'wagmi'
+import React , { useEffect, useState } from'react'
 
 function Balancee() {
+
+
+const address = '0x7a3010b00D9866C80cadaFECA573490e432BA3AC'
+
+
+
+  const { isConnected } = useAccount()
+
+  const [tam, setTam] =  useState ([]);
+  const [transaction, setTransaction] =  useState ([]);
+  const [nftCount, setNftCount] = useState([]);
+
+  const APIKEY = 'ckey_c996cca054b84fbc891de221b60';
+  const baseURL = 'https://api.covalenthq.com/v1';
+  const blockchainChainId = '1'
+  const demoAddress = address
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      Authorization: '62d93621-9f2a-4a04-b160-75b582a975e4'
+    }
+  };
+
+  async function getWalletBalance(chainId, address) {
+    const url = new URL(`${baseURL}/${chainId}/address/${address}/portfolio_v2/?key=${APIKEY}`);
+    const response = await fetch(url);
+    const result = await response.json();
+    const data = result.data;
+   
+ setTam(data.items);
+
+    return data;
+}
+
+
+async function getTransactionBalance(chainId, address) {
+  const url = new URL(`${baseURL}/${chainId}/address/${address}/transactions_v2/?key=${APIKEY}`);
+
+  const response = await fetch(url);
+  const result = await response.json();
+  let data = result.data;
+await  setTransaction(data.items);
+  return data;
+}
+
+
+const totalTransaction = transaction.length
+  
+
+
+const price = tam.map(item => {
+
+  return item.holdings
+})
+
+const aa =price.map(item => {
+  return item.map(item => {
+    return item.open.quote
+
+
+
+  })
+})
+
+
+function sumFirstElements(arr) {
+  let sum = 0;
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i].length > 0) {
+      sum += arr[i][0]; // add the first element of each inner array
+    }
+  }
+  return sum;
+}
+const myArrayOfArrays =  aa;
+const result = sumFirstElements(myArrayOfArrays);
+
+
+
+
+
+async function getNft ()  {
+  const url = new URL(`https://api.nftport.xyz/v0/accounts/${demoAddress}?chain=ethereum&page_size=50&include=metadata`);
+     const response = await fetch(url, options);
+     const result = await response.json();
+     setNftCount(result);
+     return result;  
+  }
+
+const totalNft = nftCount.total
+
+
+
+
+useEffect(() => {
+  const checkUser = () => (isConnected ? getWalletBalance(blockchainChainId, demoAddress): null);
+  getTransactionBalance(blockchainChainId, demoAddress);
+  getNft();
+  isConnected && checkUser();
+}, [isConnected]); 
+
+
+
     return (
         <div class="grid grid-cols-1 gap-8 p-4 lg:grid-cols-2 xl:grid-cols-4">
 
         <div class="flex items-center justify-between p-4 bg-white rounded-md dark:bg-darker">
           <div>
             <h6 class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
-              Value
+             Portfolio Value
             </h6>
-            <span class="text-xl font-semibold">$30,000</span>
-            <span class="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md">
-              +4.4%
-            </span>
+            <span class="text-xl font-semibold">${result}</span>
+           
           </div>
           <div>
             <span>
@@ -27,11 +131,11 @@ function Balancee() {
         <div class="flex items-center justify-between p-4 bg-white rounded-md dark:bg-darker">
           <div>
             <h6 class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
-              Users
+              Total NFTs
             </h6>
-            <span class="text-xl font-semibold">50,021</span>
+            <span class="text-xl font-semibold">{totalNft}</span>
             <span class="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md">
-              +2.6%
+             
             </span>
           </div>
           <div>
@@ -47,12 +151,10 @@ function Balancee() {
         <div class="flex items-center justify-between p-4 bg-white rounded-md dark:bg-darker">
           <div>
             <h6 class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
-              Orders
+              Total Transaction
             </h6>
-            <span class="text-xl font-semibold">45,021</span>
-            <span class="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md">
-              +3.1%
-            </span>
+            <span class="text-xl font-semibold">{totalTransaction}</span>
+            
           </div>
           <div>
             <span>
@@ -67,11 +169,11 @@ function Balancee() {
         <div class="flex items-center justify-between p-4 bg-white rounded-md dark:bg-darker">
           <div>
             <h6 class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
-              Tickets
+              24h Change
             </h6>
-            <span class="text-xl font-semibold">20,516</span>
+            <span class="text-xl font-semibold">Coming soon...</span>
             <span class="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md">
-              +3.1%
+             %
             </span>
           </div>
           <div>

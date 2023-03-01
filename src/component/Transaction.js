@@ -1,38 +1,38 @@
 import React , { useEffect, useState }from 'react'
+import { useAccount,  } from 'wagmi'
 
-function Transaction() {
+function Transaction(address) {
 
-
+const { isConnected } = useAccount()
 
     const APIKEY = 'ckey_c996cca054b84fbc891de221b60';
     const baseURL = 'https://api.covalenthq.com/v1'
     const blockchainChainId = '1'
-    const demoAddress = '0xc86B12d850FdBBF3260a7BAAE862F85857aAdBBa'
-    
-  
-  
+    const demoAddress = address.address
+
     const [tam, setTam] =  useState ([]);
-    
+   
     async function getWalletBalance(chainId, address) {
-      const url = new URL(`${baseURL}/${chainId}/address/${address}/transactions_v2/?key=${APIKEY}`);
+      const url = new URL(`https://api.covalenthq.com/v1/${chainId}/tokens/${address}/nft_metadata/?quote-currency=USD&format=JSON`, {APIKEY});
+    
       const response = await fetch(url);
       const result = await response.json();
-      const data = result.data;
-  
+      let data = result.data;
+    await  setTam(data.items);
       return data;
   }
-  
-  useEffect(() => {
-    getWalletBalance(blockchainChainId, demoAddress).then(data => {
-      setTam(data.items);
-  
-    })
-  } , [])
+console.log(tam);
 
- 
-             
-    
-    
+
+
+
+
+useEffect(() => {
+    const checkUser = () => (isConnected ? getWalletBalance(blockchainChainId, demoAddress): null);
+   
+    isConnected && checkUser();
+  }, [isConnected]); 
+
 
     return (
        
@@ -45,10 +45,10 @@ function Transaction() {
                   
            <div>
 
+{tam.map(item => {
 
 
- {  tam.map(item => {
-    return (
+  return (
         <div class="p-4 border-b dark:border-primary">
         <div class="flex items-center justify-between">
           <div class="flex items-center">
@@ -58,10 +58,10 @@ function Transaction() {
               </svg>
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500 dark:text-light"><span className='font-bold text-blue-500'>From :</span> {item.from_address}</p>
-              <p class="text-sm font-medium text-gray-500 dark:text-light"><span className='font-bold text-blue-500'>To : </span>{item.to_address}</p>
-              <p class="text-sm font-medium text-gray-500 dark:text-light"><span className='font-bold text-blue-500'>Value : </span>{item.value}</p>
-              <p class="text-sm font-medium text-gray-500 dark:text-light"><span className='font-bold text-blue-500'>Tx_Hash : </span>{item.block_signed_at}</p>
+              <p class="text-sm font-medium text-gray-500 dark:text-light"><span className='font-bold text-blue-500'>From : {item.from_address}</span> </p>
+              <p class="text-sm font-medium text-gray-500 dark:text-light"><span className='font-bold text-blue-500'>To :  {item.to_address} </span></p>
+              <p class="text-sm font-medium text-gray-500 dark:text-light"><span className='font-bold text-blue-500'>Value :  {item.value} </span></p>
+              <p class="text-sm font-medium text-gray-500 dark:text-light"><span className='font-bold text-blue-500'>Tx_Hash :  {item.tx_hash} </span></p>
             </div>
           </div>
           <div class="flex items-center justify-center h-10 w-10 rounded-md bg-[#1a3a5a] dark:bg-darker">
@@ -71,10 +71,12 @@ function Transaction() {
           </div>
         </div>
       </div>
-    )
+    
+  ) 
+  })}
+    
 
-    })
-}
+
  
                   </div>
 
@@ -91,35 +93,3 @@ function Transaction() {
 
 export default Transaction;
 
-
-
-/*
-<table class="w-screen items-center lg:w-max bg-transparent border-collapse">
-        <thead className=''>
-          <tr className=''>
-            <th class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left  text-pink-300 border-gray-200">Project</th>
-            <th class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left  text-pink-300 border-gray-200">Budget</th>
-            <th class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left  text-pink-300 border-gray-200">Status</th>
-            <th class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left  text-pink-300 border-gray-200">Users</th>
-            <th class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left  text-pink-300 border-gray-200">Completion </th>
-          
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr>
-            <th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center">
-            
-              <span class="ml-3 font-bold text-white">  </span></th>
-
-              <th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center">
-            
-            <span class="ml-3 font-bold text-white"> </span></th>
-
-            <th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center">
-            
-            <span class="ml-3 font-bold text-white">  </span></th>
-        </tr>
-        </tbody>
-        </table>
-*/

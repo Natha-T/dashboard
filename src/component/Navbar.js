@@ -1,27 +1,20 @@
-import React from 'react';
-import { useMoralis } from "react-moralis";
+import React, { useEffect, useState } from 'react'
 
-function Navbar() {
+import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import { InjectedConnector } from 'wagmi/connectors/injected'
 
 
-  const { authenticate, isAuthenticated, user, logout } = useMoralis();
-  const userEthAddress = user && user.get("ethAddress");
-
-  // handle authentication
-  const handleAuthentication = (e) => {
-    e.preventDefault();
-    authenticate({signingMessage: "NFT Mint by SNPXX using MORALIS" });
-  };
+function Navbar ()  {
 
 
 
-    // Handle logout
-const handleLogout = (e) => {
-  e.preventDefault();
-  logout();
-};
 
 
+const { address, isConnected } = useAccount()
+const { connect } = useConnect({
+  connector: new InjectedConnector(),
+})
+const { disconnect } = useDisconnect()
 
 
     return (
@@ -30,7 +23,7 @@ const handleLogout = (e) => {
 
 		  <nav aria-label="Main" class="flex-1 px-2 py-4 space-y-2 overflow-y-hidden hover:overflow-y-auto">
 
-			<a href="#" class="flex items-center bg-[#e2ecf7] px-2 py-2 rounded-md text-sm font-medium leading-5 text-gray-900  dark:hover:bg-gray-700 dark-hover:bg-gray-700 dark-hover:text-white transition ease-in-out duration-150">
+			<a  class="flex items-center bg-[#e2ecf7] px-2 py-2 rounded-md text-sm font-medium leading-5 text-gray-900  dark:hover:bg-gray-700 dark-hover:bg-gray-700 dark-hover:text-white transition ease-in-out duration-150">
 			<span aria-hidden="true">
                     <svg
                       class="w-5 h-5"
@@ -66,25 +59,30 @@ const handleLogout = (e) => {
 			   
 
 
-      { isAuthenticated ? 
+      { isConnected ? 
  
 <div>
       <button class="flex items-center px-2 py-2 rounded-md text-sm font-medium leading-5 w-full  bg-red-500 text-gray-900  dark:hover:bg-red-800 dark-hover:bg-gray-700 dark-hover:text-white transition ease-in-out duration-150"
-       onClick={handleLogout}>
+    onClick={() => disconnect()}
+    //  onClick={handleLogout}
+     >
         Log Out
         </button>
 
 
-      <p className='text-white serif p-2  break-words '>Logged in as : {userEthAddress}</p>
+      <p className='text-white serif p-2  break-words '>Logged in as : {address}</p>
 
 </div>
-      /*--------------------------------- */
 
-      : <button class="flex font-bold items-center px-2 py-2 rounded-md text-sm font-medium leading-5 w-full  bg-blue-500 text-gray-900  dark:hover:bg-blue-800 dark-hover:bg-gray-700 dark-hover:text-white transition ease-in-out duration-150"
-       onClick={handleAuthentication}>
-        Login
-        </button>  }
-  
+      :<div> <button class="flex font-bold items-center px-2 py-2 rounded-md text-sm  leading-5 w-full  bg-blue-500 text-gray-900  dark:hover:bg-blue-800 dark-hover:bg-gray-700 dark-hover:text-white transition ease-in-out duration-150"
+      onClick={() => connect()}
+    
+      >
+        Connect Wallet
+        </button>
+        You have to connect your wallet to see data : ONLY ETH MAINNET </div>
+          }
+      
 
 		
 			

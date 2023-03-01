@@ -11,6 +11,7 @@ import {
     Legend,
   } from 'chart.js';
   import { Line } from 'react-chartjs-2';
+  import { useAccount, useConnect, useEnsName } from 'wagmi'
 
   ChartJS.register(
     CategoryScale,
@@ -22,7 +23,10 @@ import {
     Filler,
     Legend);
 
-function Chart() {
+function Chart(address ) {
+
+ const { isConnected } = useAccount()
+
 
 
 
@@ -30,9 +34,7 @@ function Chart() {
   const APIKEY = 'ckey_c996cca054b84fbc891de221b60';
   const baseURL = 'https://api.covalenthq.com/v1'
   const blockchainChainId = '1'
-  const demoAddress = '0xc86B12d850FdBBF3260a7BAAE862F85857aAdBBa'
-  
-
+  const demoAddress = address.address
 
   const [tam, setTam] =  useState ([]);
   
@@ -41,16 +43,22 @@ function Chart() {
     const response = await fetch(url);
     const result = await response.json();
     const data = result.data;
-
+   
+ setTam(data.items);
     return data;
 }
 
-useEffect(() => {
-  getWalletBalance(blockchainChainId, demoAddress).then(data => {
-    setTam(data.items);
 
-  })
-} , [])
+
+useEffect(() => {
+    const checkUser = () => (isConnected ? getWalletBalance(blockchainChainId, demoAddress): null);
+    isConnected && checkUser();
+  }, [isConnected]); 
+
+
+
+
+
 
 
 
@@ -90,7 +98,7 @@ var array = aa,
           borderColor: 'rgba(255, 255, 255, 1)',
           tension: 0.4,
           borderWidth: 2,
-          fill: 'start',
+         
       
           pointRadius: 0,
           pointHoverRadius: 0
@@ -151,10 +159,12 @@ var array = aa,
     
         <div class="relative p-4 h-full"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand">
             
-                  <Line
+                
+          <Line       options={options }
+            data={data }/>
+      
+      
           
-                 options={options }
-            data={data} />
             <div class="shadow-lg  rounded-lg p-4 mb-8 xl:mb-0 ">
               
             </div></div><div class="chartjs-size-monitor-shrink"><div class="">
@@ -168,4 +178,4 @@ var array = aa,
 }
 
 export default Chart;
- 
+   
