@@ -2,10 +2,10 @@
 import { useAccount } from 'wagmi'
 import React , { useEffect, useState } from'react'
 
-function Balancee() {
+function Balancee(address) {
 
 
-const address = '0x7a3010b00D9866C80cadaFECA573490e432BA3AC'
+
 
 
 
@@ -18,7 +18,7 @@ const address = '0x7a3010b00D9866C80cadaFECA573490e432BA3AC'
   const APIKEY = 'ckey_c996cca054b84fbc891de221b60';
   const baseURL = 'https://api.covalenthq.com/v1';
   const blockchainChainId = '1'
-  const demoAddress = address
+  const demoAddress = address.address
   const options = {
     method: 'GET',
     headers: {

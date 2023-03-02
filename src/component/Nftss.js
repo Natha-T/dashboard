@@ -5,12 +5,12 @@ import nonft from '../img/nullimg.png'
 import { useAccount, } from 'wagmi'
 
 
-function Nftss() {
-  const address = '0x7a3010b00D9866C80cadaFECA573490e432BA3AC'
+function Nftss(address) {
+ 
 
   const { isConnected } = useAccount()
 
-  const demoAddress = address
+  const demoAddress = address.address
 
  const [tam, setTam] =  useState ([]);
 
